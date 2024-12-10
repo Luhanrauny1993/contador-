@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contador de Dias de Namoro</title>
+  <style>
+    /* Estilo do corpo */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      text-align: center;
+      background-color: black; /* Fundo preto */
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    h1, h2, p {
+      margin: 10px 0;
+    }
+
+    #counter {
+      font-size: 50px;
+      color: #ff4081;
+      margin: 20px 0;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    img {
+      max-width: 200px;
+      height: auto;
+      margin: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    p {
+      font-size: 18px;
+      color: #f8f8f8;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Estilo da cartinha */
+    #letter {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #333;
+      padding: 20px;
+      width: 60%;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      font-size: 20px;
+      color: black; /* Aqui definimos a cor preta para o texto da cartinha */
+    }
+
+    #letter p {
+      color: black; /* Garante que o texto na cartinha seja preto */
+    }
+  </style>
+</head>
+<body>
+  <h1>Nosso Contador de Dias de Namoro ❤️</h1>
+  <p>Estamos juntos há:</p>
+  <div id="counter">0 dias 0 horas 0 minutos 0 segundos</div>
+  <p>...e para a vida toda! 🥰</p>
+
+  <!-- Adicione suas fotos aqui -->
+  <img src="sua-foto.jpg" alt="Sua Foto">
+  <img src="foto-dela.jpg" alt="Foto Dela">
+  <img src="foto-extra1.jpg" alt="Foto Extra 1">
+ 
+  <!-- Cartinha para a namorada -->
+  <div id="letter">
+    <h2>Minha doidinha Kaori,</h2>
+    <p>Desde o dia que nos conhecemos, minha vida mudou para sempre. Cada dia ao seu lado é um presente, e estou contando os dias para que possamos viver muitas mais aventuras juntos. Te amo muito!</p>
+    <p>Com todo o meu amor,</p>
+    <p>Luhan ❤️</p>
+  </div>
+
+  <!-- Canvas para as partículas -->
+  <canvas id="particles"></canvas>
+
+  <!-- Música de fundo -->
+  <audio autoplay loop>
+    <source src="background-music.mp3" type="audio/mpeg">
+    Seu navegador não suporta o elemento de áudio.
+  </audio>
+
+  <script>
+    // Data do início do namoro: 05/10/2024
+    const startDate = new Date('2024-10-05T00:00:00'); // Data de início
+
+    function updateCounter() {
+      const today = new Date();
+      const differenceInTime = today - startDate;
+
+      // Calcular dias, horas, minutos e segundos
+      const differenceInDays = Math.floor(differenceInTime / (1000 * 60 * 60 * 24));
+      const differenceInHours = Math.floor((differenceInTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const differenceInMinutes = Math.floor((differenceInTime % (1000 * 60 * 60)) / (1000 * 60));
+      const differenceInSeconds = Math.floor((differenceInTime % (1000 * 60)) / 1000);
+      
+      // Atualiza o contador na tela
+      document.getElementById('counter').innerText = `${differenceInDays} dias ${differenceInHours} horas ${differenceInMinutes} minutos ${differenceInSeconds} segundos`;
+    }
+
+    // Atualiza o contador ao carregar a página
+    updateCounter();
+
+    // Atualiza o contador a cada segundo
+    setInterval(updateCounter, 1000); // 1 vez por segundo
+
+    // Efeito de partículas
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+    const pandaImage = new Image();
+    pandaImage.src = 'panda.png'; // Substitua pela imagem de panda
+    const heartImage = new Image();
+    heartImage.src = 'heart.png'; // Substitua pela imagem de coração
+
+    function Particle(x, y, type) {
+      this.x = x;
+      this.y = y;
+      this.size = Math.random() * 5 + 2;
+      this.speedX = Math.random() * 2 - 1;
+      this.speedY = Math.random() * 3 + 2;
+      this.type = type;
+    }
+
+    Particle.prototype.update = function() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.y > canvas.height) {
+        this.y = -this.size;
+      }
+    };
+
+    Particle.prototype.draw = function() {
+      if (this.type === 'panda') {
+        ctx.drawImage(pandaImage, this.x, this.y, this.size * 2, this.size * 2);
+      } else if (this.type === 'heart') {
+        ctx.drawImage(heartImage, this.x, this.y, this.size * 2, this.size * 2);
+      }
+    };
+
+    function createParticles(e) {
+      const type = Math.random() > 0.5 ? 'panda' : 'heart';
+      const amount = 10;
+      for (let i = 0; i < amount; i++) {
+        particles.push(new Particle(e.x, e.y, type));
+      }
+    }
+
+    canvas.addEventListener('mousemove', function(e) {
+      createParticles(e);
+    });
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((particle, index) => {
+        particle.update();
+        particle.draw();
+        if (particle.y > canvas.height) {
+          particles.splice(index, 1);
+        }
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+  </script>
+</body>
+</html>
